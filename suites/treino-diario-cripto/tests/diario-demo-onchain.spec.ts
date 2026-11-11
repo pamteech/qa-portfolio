@@ -1,6 +1,5 @@
 import { CHAVE_DIARIO, ENDERECO_BC1, ENDERECO_P2SH, SEED_EXEMPLO, XPUB_EXEMPLO } from '../suporte/constantes';
 import { lerJson } from '../suporte/armazenamento';
-import { defeitoConhecido } from '../suporte/anotacoes';
 import { test, expect } from '../fixtures/test';
 
 test.describe('Demonstração, cotação e carteira pública', () => {
@@ -50,10 +49,7 @@ test.describe('Demonstração, cotação e carteira pública', () => {
     await expect(caixa).toBeEmpty();
   });
 
-  test('aceita endereço legado e recusa xpub, seed e endereço inválido @regressao', async ({ diario }) => {
-    await defeitoConhecido(
-      'Defeito conhecido: um endereço bc1 só em maiúsculas é recusado. O BIP-173 aceita a forma toda em maiúsculas; o validador do app só reconhece minúsculas.',
-    );
+  test('aceita endereço legado e bc1 em maiúsculas, e recusa xpub, seed e maiúsculas misturadas @regressao', async ({ diario }) => {
     await diario.abrir();
     await diario.esperarCotacao('CoinGecko');
     const campo = diario.page.locator('#addr-form input[name="addr"]');
@@ -74,6 +70,11 @@ test.describe('Demonstração, cotação e carteira pública', () => {
     await expect(campo).toHaveValue('');
 
     await campo.fill(ENDERECO_BC1.toUpperCase());
+    await diario.page.locator('#addr-form').getByRole('button', { name: 'Acompanhar' }).click();
+    await expect(diario.page.locator('#chain-box')).toContainText('Saldo on-chain');
+
+    const misto = `${ENDERECO_BC1.slice(0, 4)}${ENDERECO_BC1[4].toUpperCase()}${ENDERECO_BC1.slice(5)}`;
+    await campo.fill(misto);
     await diario.page.locator('#addr-form').getByRole('button', { name: 'Acompanhar' }).click();
     await diario.esperarToast('Endereço de bitcoin inválido');
     await expect(campo).toHaveValue('');
@@ -119,10 +120,7 @@ test.describe('Demonstração, cotação e carteira pública', () => {
     await expect(diario.page.getByRole('button', { name: 'Tentar de novo' })).toBeVisible();
   });
 
-  test('aceita preço manual no formato brasileiro e trata ponto como milhar @regressao', async ({ diario }) => {
-    await defeitoConhecido(
-      'Defeito conhecido: o preço manual remove todos os pontos antes de ler a vírgula. "350.000,50" vira R$ 350.000,50, mas "410000.50" (ponto decimal, como na Binance) vira R$ 41.000.050,00.',
-    );
+  test('aceita preço manual com milhar brasileiro e com ponto decimal @regressao', async ({ diario }) => {
     await diario.abrir();
     await diario.esperarCotacao('CoinGecko');
     await diario.lancar({ data: '2026-04-04', valor: '250', btc: '0.0005' });
@@ -139,6 +137,7 @@ test.describe('Demonstração, cotação e carteira pública', () => {
 
     diario.page.once('dialog', (dialog) => dialog.accept('410000.50'));
     await diario.page.getByRole('button', { name: 'informar preço manualmente' }).click();
-    await expect(diario.kpi('Valor atual')).toContainText('20.500,03');
+    await expect(diario.page.locator('.price-src')).toContainText('410.000,50');
+    await expect(diario.kpi('Valor atual')).toContainText('205,00');
   });
 });

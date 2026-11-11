@@ -1,6 +1,5 @@
 import fs from 'node:fs/promises';
 import type { Download } from '@playwright/test';
-import { defeitoConhecido } from '../suporte/anotacoes';
 import { test, expect } from '../fixtures/test';
 
 async function textoDoDownload(download: Download) {
@@ -73,9 +72,6 @@ test.describe('CSV e calendário', () => {
   });
 
   test('baixa o lembrete mensal em .ics e marca o dia de hoje @regressao', async ({ diario }) => {
-    await defeitoConhecido(
-      'Defeito conhecido: o SUMMARY do .ics inclui "R$ 300,00" com vírgula sem escape. A DESCRIPTION escapa a vírgula; o título, não. Calendários rígidos podem cortar o texto em "R$ 300".',
-    );
     await diario.abrir();
     const form = diario.page.locator('#rem-form');
     await form.locator('input[name="dia"]').fill('15');
@@ -88,8 +84,8 @@ test.describe('CSV e calendário', () => {
     expect(ics).toContain('PRODID:-//Treino e Diario Cripto//PT-BR');
     expect(ics).toContain('DTSTART;VALUE=DATE:20260615');
     expect(ics).toContain('RRULE:FREQ=MONTHLY;BYMONTHDAY=15');
-    expect(ics).toContain('SUMMARY:DCA bitcoin: comprar R$ 300,00');
-    expect(ics).not.toContain('SUMMARY:DCA bitcoin: comprar R$ 300\\,00');
+    expect(ics).toContain('SUMMARY:DCA bitcoin: comprar R$ 300\\,00');
+    expect(ics).not.toContain('SUMMARY:DCA bitcoin: comprar R$ 300,00');
     expect(ics).toContain('TRIGGER:PT9H');
     expect(ics).toContain('END:VCALENDAR');
 

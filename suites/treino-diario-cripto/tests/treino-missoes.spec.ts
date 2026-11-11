@@ -1,5 +1,4 @@
 import { treinoFormatura, semearTreino } from '../suporte/armazenamento';
-import { defeitoConhecido } from '../suporte/anotacoes';
 import { test, expect } from '../fixtures/test';
 
 const RESPOSTAS_GOLPE = [
@@ -32,19 +31,19 @@ test.describe('Missões sem fundos reais', () => {
     await expect(treino.missao('Conferir o endereço antes de enviar')).toContainText('Concluída');
   });
 
-  test('os valores do histórico não identificam o endereço verdadeiro @regressao', async ({ treino }) => {
-    await defeitoConhecido(
-      'Defeito conhecido: na missão Conferir, os rótulos 0,05 ETH / 0 ETH seguem a posição do botão, não o endereço. O endereço certo pode aparecer como transação de 0 ETH.',
-    );
-    let viuRotuloTrocado = false;
-    for (let tentativa = 0; tentativa < 6 && !viuRotuloTrocado; tentativa++) {
-      await treino.abrir();
-      await treino.abrirMissao('Conferir o endereço antes de enviar');
-      const alvo = (await treino.page.locator('.chat code').innerText()).trim();
-      const legenda = await treino.page.locator('.opt', { hasText: alvo }).locator('small').innerText();
-      viuRotuloTrocado = !legenda.includes('0,05 ETH');
+  test('o valor de 0,05 ETH fica só no endereço verdadeiro @regressao', async ({ treino }) => {
+    await treino.abrir();
+    await treino.abrirMissao('Conferir o endereço antes de enviar');
+    const alvo = (await treino.page.locator('.chat code').innerText()).trim();
+    const opcoes = treino.page.locator('.opt');
+    await expect(opcoes).toHaveCount(4);
+    await expect(opcoes.filter({ hasText: alvo }).locator('small')).toContainText('0,05 ETH');
+    const parecidos = opcoes.filter({ hasNotText: alvo });
+    await expect(parecidos).toHaveCount(3);
+    for (const legenda of await parecidos.locator('small').allInnerTexts()) {
+      expect(legenda).toContain('0 ETH');
+      expect(legenda).not.toContain('0,05 ETH');
     }
-    expect(viuRotuloTrocado).toBe(true);
   });
 
   test('missão Golpes conclui as seis situações e libera a medalha @regressao', async ({ treino }) => {
@@ -139,26 +138,33 @@ test.describe('Missões sem fundos reais', () => {
     await expect(treino.medalha('Enviar')).not.toHaveClass(/on/);
   });
 
-  test('a confirmação do envio continua válida depois que o destino muda @regressao', async ({ treino }) => {
-    await defeitoConhecido(
-      'Defeito conhecido: depois de marcar "Conferi o endereço inteiro", alterar o destino não desmarca a caixa nem desabilita "Assinar e enviar". A revisão continua mostrando o endereço anterior.',
-    );
+  test('alterar destino ou valor depois da revisão desfaz a confirmação @regressao', async ({ treino }) => {
     await treino.abrir();
     await treino.criarCarteira();
     const proprio = await treino.endereco();
     await treino.abrirMissao('Enviar uma quantia de teste');
     const form = treino.page.locator('#send-form');
+    const enviar = form.getByRole('button', { name: 'Assinar e enviar' });
+    const caixa = form.locator('.confirm-box');
+
+    await form.getByRole('button', { name: 'Revisar envio' }).click();
+    await expect(caixa).toBeVisible();
+    await form.locator('input[name="ok"]').check();
+    await expect(enviar).toBeEnabled();
+
+    await form.locator('input[name="to"]').fill('0x0000000000000000000000000000000000000001');
+    await expect(enviar).toBeDisabled();
+    await expect(form.locator('input[name="ok"]')).not.toBeChecked();
+    await expect(caixa).toBeHidden();
+
+    await form.locator('input[name="to"]').fill(proprio);
     await form.getByRole('button', { name: 'Revisar envio' }).click();
     await form.locator('input[name="ok"]').check();
-    const prefixo = proprio.slice(0, 8);
-    await expect(form.locator('[data-a]')).toHaveText(prefixo);
-
-    const outro = '0x0000000000000000000000000000000000000001';
-    await form.locator('input[name="to"]').fill(outro);
-    await expect(form.getByRole('button', { name: 'Assinar e enviar' })).toBeEnabled();
-    await expect(form.locator('input[name="ok"]')).toBeChecked();
-    await expect(form.locator('[data-a]')).toHaveText(prefixo);
-    await expect(form.locator('[data-a]')).not.toHaveText(outro.slice(0, 8));
+    await expect(enviar).toBeEnabled();
+    await form.locator('input[name="amount"]').fill('0.0002');
+    await expect(enviar).toBeDisabled();
+    await expect(form.locator('input[name="ok"]')).not.toBeChecked();
+    await expect(caixa).toBeHidden();
   });
 
   test('exibe o certificado quando as cinco missões estão concluídas @regressao', async ({ page, treino, inicio }) => {

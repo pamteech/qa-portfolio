@@ -5,7 +5,7 @@ import { attachment } from 'allure-js-commons';
 import { diarioInicial, gravarDiarioERecarregar } from '../suporte/armazenamento';
 import { test, expect } from '../fixtures/test';
 
-const REGRAS_CONHECIDAS = new Set(['color-contrast', 'scrollable-region-focusable']);
+const REGRAS_CONHECIDAS = new Set<string>();
 
 async function auditar(page: Page) {
   return new AxeBuilder({ page })
@@ -23,7 +23,7 @@ function resumo(violacoes: Result[]) {
 }
 
 test.describe('Acessibilidade', () => {
-  test('as telas principais não têm violações WCAG fora das já conhecidas @a11y', async ({ page, inicio, treino, diario }) => {
+  test('as telas principais não têm violações WCAG @a11y', async ({ page, inicio, treino, diario }) => {
     const telas: Array<{ nome: string; abrir: () => Promise<void> }> = [
       { nome: 'início', abrir: () => inicio.abrir() },
       { nome: 'treino', abrir: () => treino.abrir() },
@@ -84,12 +84,5 @@ test.describe('Acessibilidade', () => {
     }
 
     expect(inesperadas, 'nova violação de acessibilidade').toEqual([]);
-    test.info().annotations.push({
-      type: 'defeito',
-      description:
-        'Defeitos conhecidos apontados pelo axe: ' +
-        ([...conhecidas].sort().join(', ') || 'nenhum nesta execução') +
-        '. Contraste do texto secundário abaixo de 4.5:1 e, no celular, a tabela de IR rola na horizontal sem poder receber foco de teclado.',
-    });
   });
 });

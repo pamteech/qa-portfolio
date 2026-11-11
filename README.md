@@ -67,19 +67,19 @@ O workflow [E2E Treino & Diário Cripto](.github/workflows/e2e-treino-diario.yml
 
 Relatório: [https://pamteech.github.io/qa-portfolio/](https://pamteech.github.io/qa-portfolio/). O endereço passa a responder quando o workflow roda na `main` com o GitHub Pages usando GitHub Actions como origem.
 
-## Defeitos e observações
+## Defeitos encontrados e corrigidos
 
-Achados no app que está no ar. Nada disso foi corrigido aqui; os testes caracterizam o comportamento e marcam o defeito com a anotação `defeito`.
+A primeira versão da suíte achou sete defeitos no app. Eles foram corrigidos em produção, e os testes agora exigem o comportamento novo. Se algum voltar, a suíte fica vermelha.
 
-1. **Contraste do texto secundário.** O axe aponta `color-contrast` (sério, WCAG 1.4.3) na home, no Treino e no Diário. O sintoma está em parágrafos, na classe `.tiny` e nos trechos em negrito do rodapé. A cor `--muted` (`#64748b`) sobre o fundo `#f4f6fa` fica abaixo de 4.5:1.
-2. **Tabela de IR sem foco no celular.** Com lançamentos, `.ir > .table-wrap` rola na horizontal e o axe aponta `scrollable-region-focusable`. No desktop a tabela cabe na tela e a regra não dispara.
-3. **Missão Conferir mistura o valor com o endereço.** Os rótulos `0,05 ETH` / `0 ETH` seguem a ordem do botão, não o endereço sorteado. O endereço certo pode aparecer como transação de valor zero. O teste procura o endereço idêntico ao da mensagem e, à parte, confirma que o rótulo de valor não acompanha esse endereço.
-4. **A revisão do envio não invalida a confirmação.** Depois de marcar “Conferi o endereço inteiro”, mudar o destino deixa “Assinar e enviar” habilitado e a revisão continua mostrando o endereço anterior. O teste não transmite a transação.
-5. **Preço manual trata todo ponto como milhar.** `350.000,50` vira R$ 350.000,50. `410000.50`, no formato da Binance, vira R$ 41.000.050,00.
-6. **O `.ics` não escapa a vírgula do valor.** O `SUMMARY` sai como `comprar R$ 300,00`. A `DESCRIPTION` escapa a vírgula; o título, não. Um calendário rígido pode cortar o texto em `R$ 300`.
-7. **Endereço bc1 só em maiúsculas é recusado.** O BIP-173 aceita a forma toda em maiúsculas. O validador do app só reconhece minúsculas, limpa o campo e avisa que o endereço é inválido.
+1. **Contraste.** `--muted` saiu de `#64748b` para `#475569`, com contraste de 7:1. O axe não dispensa mais `color-contrast`.
+2. **Tabela rolável.** `.table-wrap` tem `role="region"`, `tabindex="0"` e `aria-label`, então o teclado alcança a rolagem.
+3. **Missão Conferir.** O rótulo `0,05 ETH` fica preso ao endereço verdadeiro. Os parecidos mostram `0 ETH`.
+4. **Revisão do envio.** Mudar o destino ou o valor depois da revisão desmarca a caixa, desabilita “Assinar e enviar” e esconde `.confirm-box`.
+5. **Preço manual.** `410000.50` e `410.000,50` valem o mesmo. Com 0,0005 BTC, `410000.50` dá R$ 205,00.
+6. **Arquivo .ics.** Barra invertida, vírgula, ponto e vírgula e quebra de linha são escapados nos campos TEXT. O `SUMMARY` contém `R$ 300\,00`.
+7. **Endereço bc1.** A forma toda em maiúsculas é aceita. Maiúsculas e minúsculas misturadas continuam recusadas.
 
-Observações que não tratei como defeito: a chave da carteira de teste fica em texto puro no `localStorage` (o próprio app avisa que é só Sepolia); o envio de verdade depende de faucet com captcha e não entra na suíte.
+A chave da carteira de teste segue em texto puro no `localStorage`, como o próprio app avisa, porque só existe na Sepolia. O envio real continua fora da suíte: a faucet pede captcha.
 
 ## Estrutura
 
