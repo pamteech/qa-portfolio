@@ -65,7 +65,7 @@ O histórico local é reaproveitado se já existir um relatório. No CI, o scrip
 
 O workflow [E2E Treino & Diário Cripto](.github/workflows/e2e-treino-diario.yml) roda em todo push na `main`, em pull request para a `main`, por disparo manual e todo dia às 12:00 UTC. Na `main`, ele publica o Allure com `actions/deploy-pages`.
 
-Relatório: [https://pamteech.github.io/qa-portfolio/](https://pamteech.github.io/qa-portfolio/)
+Relatório: [https://pamteech.github.io/qa-portfolio/](https://pamteech.github.io/qa-portfolio/). O endereço passa a responder quando o workflow roda na `main` com o GitHub Pages usando GitHub Actions como origem.
 
 ## Defeitos e observações
 
