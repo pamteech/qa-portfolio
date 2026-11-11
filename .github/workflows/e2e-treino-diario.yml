@@ -1,0 +1,99 @@
+name: E2E Treino & Diário Cripto
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  teste:
+    name: Playwright e Allure
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configurar Java para o Allure
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # A imagem ubuntu-24.04 ja traz as bibliotecas de sistema do Chrome.
+      # Instalar so o navegador evita o apt-get, que vinha travando por falha
+      # de DNS nos espelhos do Ubuntu dentro do runner.
+      - name: Instalar o Chromium
+        timeout-minutes: 10
+        run: npx playwright install chromium
+
+      - name: Executar a suíte
+        run: npm test
+        env:
+          CI: true
+          BASE_URL: https://cripto-treino-diario.vercel.app
+
+      - name: Recuperar o histórico publicado
+        if: always()
+        run: npm run report:historico
+
+      - name: Gerar o Allure Report
+        if: always()
+        run: npm run report
+
+      - name: Guardar os resultados brutos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: suites/treino-diario-cripto/allure-results
+          retention-days: 14
+
+      - name: Publicar o artefato do GitHub Pages
+        if: success() && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: suites/treino-diario-cripto/allure-report
+
+  publicar:
+    name: GitHub Pages
+    needs: teste
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Garantir Pages via GitHub Actions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method POST "/repos/${{ github.repository }}/pages" -f build_type=workflow \
+            || gh api --method PUT "/repos/${{ github.repository }}/pages" -f build_type=workflow \
+            || echo "Não foi possível alterar a origem do Pages por API; o deploy segue com a configuração atual."
+
+      - name: Publicar o relatório
+        id: deployment
+        uses: actions/deploy-pages@v4

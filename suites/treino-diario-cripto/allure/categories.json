@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Defeito conhecido do produto",
+    "messageRegex": ".*[Dd]efeito conhecido.*",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "Tempo esgotado",
+    "messageRegex": ".*(Timeout|timeout).*",
+    "matchedStatuses": ["broken", "failed"]
+  },
+  {
+    "name": "Falha de asserção",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "Erro inesperado",
+    "matchedStatuses": ["broken"]
+  }
+]

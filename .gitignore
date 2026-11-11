@@ -1,0 +1,14 @@
+node_modules/
+dist/
+playwright-report/
+blob-report/
+test-results/
+allure-results/
+allure-report/
+suites/**/test-results/
+suites/**/allure-results/
+suites/**/allure-report/
+.env
+.env.*
+*.log
+.DS_Store
