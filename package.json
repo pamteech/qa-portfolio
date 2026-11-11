@@ -1,0 +1,29 @@
+{
+  "name": "qa-portfolio",
+  "private": true,
+  "description": "Portfólio de QA da Pamella Soares — suítes E2E e relatórios publicados",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts",
+    "test:smoke": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts --grep @smoke",
+    "test:regressao": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts --grep @regressao",
+    "test:a11y": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts --grep @a11y",
+    "test:mobile": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts --project=mobile",
+    "test:update-snapshots": "playwright test --config=suites/treino-diario-cripto/playwright.config.ts --update-snapshots visual.spec.ts",
+    "report": "node suites/treino-diario-cripto/scripts/gerar-relatorio.mjs",
+    "report:historico": "node suites/treino-diario-cripto/scripts/baixar-historico.mjs",
+    "report:abrir": "npm run report && allure open suites/treino-diario-cripto/allure-report"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^22.19.0",
+    "allure-commandline": "^2.34.1",
+    "allure-js-commons": "^3.4.2",
+    "allure-playwright": "^3.4.2",
+    "typescript": "^5.9.3"
+  }
+}
