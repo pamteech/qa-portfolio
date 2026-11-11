@@ -42,8 +42,12 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+      # A imagem ubuntu-24.04 ja traz as bibliotecas de sistema do Chrome.
+      # Instalar so o navegador evita o apt-get, que vinha travando por falha
+      # de DNS nos espelhos do Ubuntu dentro do runner.
       - name: Instalar o Chromium
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 10
+        run: npx playwright install chromium
 
       - name: Executar a suíte
         run: npm test
