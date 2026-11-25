@@ -1,3 +1,5 @@
+![Portfólio de QA · Pam Teech](docs/banner.svg)
+
 # Portfólio de QA — Pam Teech
 
 [![GitHub Pages](https://img.shields.io/badge/relat%C3%B3rios-GitHub%20Pages-A855F7?labelColor=0D0B1E)](https://pamteech.github.io/qa-portfolio/)
