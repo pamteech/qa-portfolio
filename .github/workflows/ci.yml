@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checagens:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir o hub e o README
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          missing = [p for p in ("index.html", "README.md", "docs/banner.svg", "docs/painel-api-cripto.png", "docs/painel-ledger.png") if not Path(p).is_file()]
+          if missing:
+              raise SystemExit("faltando: " + ", ".join(missing))
+          html = Path("index.html").read_text(encoding="utf-8")
+          readme = Path("README.md").read_text(encoding="utf-8")
+          for needle in (
+              "https://pamteech.github.io/qa-api-cripto/",
+              "https://pamteech.github.io/qa-ledger-speculos/",
+              "docs/banner.svg",
+          ):
+              if needle not in html:
+                  raise SystemExit(f"index.html sem {needle}")
+          if "https://pamteech.github.io/qa-portfolio/" not in readme:
+              raise SystemExit("README sem o link da demo")
+          print("ok")
+          PY

@@ -2,12 +2,15 @@
 
 # Portfólio de QA — Pam Teech
 
+[![testes](https://img.shields.io/github/actions/workflow/status/pamteech/qa-portfolio/ci.yml?label=testes&labelColor=0D0B1E&color=39FF88)](https://github.com/pamteech/qa-portfolio/actions/workflows/ci.yml)
 [![GitHub Pages](https://img.shields.io/badge/relat%C3%B3rios-GitHub%20Pages-A855F7?labelColor=0D0B1E)](https://pamteech.github.io/qa-portfolio/)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-22D3EE?labelColor=0D0B1E)](./LICENSE)
 
 Hub das suítes de teste automatizadas da [Pam Teech](https://github.com/pamteech) (Pamella Soares). Cada suíte vive no próprio repositório, com CI e relatório publicado no GitHub Pages.
 
-**Página do portfólio:** https://pamteech.github.io/qa-portfolio/
+**Demo ao vivo:** [pamteech.github.io/qa-portfolio](https://pamteech.github.io/qa-portfolio/)
+
+[![Captura do hub do portfólio](docs/banner.svg)](https://pamteech.github.io/qa-portfolio/)
 
 ## Suítes publicadas
 

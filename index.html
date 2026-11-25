@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfólio de QA · Pam Teech</title>
+  <meta name="description" content="Suítes de teste automatizadas da Pam Teech, com CI e relatório no GitHub Pages.">
+  <meta name="theme-color" content="#0D0B1E">
+  <style>
+    :root { --bg:#0D0B1E; --purple:#A855F7; --cyan:#22D3EE; --green:#39FF88; --text:#F8F7FF; --muted:#C4B5E8; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
+    header { padding: 28px 20px 8px; text-align:center; }
+    header img { width:min(100%, 960px); height:auto; }
+    main { max-width: 960px; margin: 0 auto; padding: 16px 20px 64px; }
+    h1 { font-size: 1.6rem; margin: 8px 0 4px; }
+    .lead { color: var(--muted); margin: 0 0 28px; }
+    a { color: var(--cyan); }
+    .grid { display:grid; gap:20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    article { background:#15122A; border:1px solid #2A2150; border-radius:16px; overflow:hidden; }
+    article img { width:100%; height:auto; display:block; border-bottom:1px solid #2A2150; }
+    article .body { padding:16px 18px 20px; }
+    article h2 { margin:0 0 8px; font-size:1.15rem; }
+    article p { margin:0 0 14px; color:var(--muted); font-size:0.95rem; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:8px 12px; border-radius:999px; text-decoration:none; font-weight:600; font-size:0.9rem; }
+    .btn.primary { background:var(--purple); color:#fff; }
+    .btn.ghost { border:1px solid var(--cyan); color:var(--cyan); }
+    footer { max-width:960px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="docs/banner.svg" alt="Portfólio de QA · Pam Teech">
+  </header>
+  <main>
+    <h1>Portfólio de QA</h1>
+    <p class="lead">Suítes de teste automatizadas da <a href="https://github.com/pamteech">Pam Teech</a>, com CI e relatório público. Cada suíte vive no próprio repositório.</p>
+    <div class="grid">
+      <article>
+        <img src="docs/painel-api-cripto.png" alt="Painel de qualidade da suíte de API cripto">
+        <div class="body">
+          <h2>qa-api-cripto</h2>
+          <p>Contrato, sanidade de dados e desempenho de APIs públicas de cripto (CoinGecko, Binance e mempool.space), com Postman, Newman e k6.</p>
+          <div class="btns">
+            <a class="btn primary" href="https://pamteech.github.io/qa-api-cripto/">Ver relatório</a>
+            <a class="btn ghost" href="https://github.com/pamteech/qa-api-cripto">Repositório</a>
+          </div>
+        </div>
+      </article>
+      <article>
+        <img src="docs/painel-ledger.png" alt="Painel de qualidade da suíte Ledger no Speculos">
+        <div class="body">
+          <h2>qa-ledger-speculos</h2>
+          <p>Carteira de hardware Ledger Nano S Plus no emulador Speculos: tela, botões, APDU e assinaturas verificadas com pytest.</p>
+          <div class="btns">
+            <a class="btn primary" href="https://pamteech.github.io/qa-ledger-speculos/">Ver relatório</a>
+            <a class="btn ghost" href="https://github.com/pamteech/qa-ledger-speculos">Repositório</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer>
+    Também tem os <a href="https://github.com/pamteech/qa-prompts">prompts de QA com IA</a> em português. · Pam Teech · 2026
+  </footer>
+</body>
+</html>
